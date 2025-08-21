@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mosca Branca em Soja - NDE</title>
+
+    <style>
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; margin: 0; padding: 0; background-color: #f4f4f4; color: #333; line-height: 1.6; }
+        .container { width: 90%; max-width: 960px; margin: 0 auto; }
+        .header { background-color: #2c5e3A; color: white; padding: 2rem 0; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .header h1 { margin: 0; font-size: 2rem; }
+        .header .sub-heading { margin: 0.5rem 0 0 0; font-size: 1.1rem; font-weight: 300; opacity: 0.9; }
+        .main-content { padding: 1.5rem 0; }
+        .card { background-color: white; padding: 1.5rem; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); margin-bottom: 1.5rem; }
+        .form-group { margin-bottom: 1.5rem; }
+        .form-group label { display: block; font-weight: bold; margin-bottom: 0.5rem; color: #555; }
+        .form-group input, .form-group select { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 5px; font-size: 1rem; box-sizing: border-box; }
+        .button { display: block; width: 100%; background-color: #007BFF; color: white; padding: 15px; text-decoration: none; border-radius: 5px; font-size: 1.1rem; font-weight: bold; border: none; cursor: pointer; text-align: center; margin-top: 1rem; }
+        .button:hover { background-color: #0056b3; }
+        #resultado { margin-top: 1.5rem; padding: 1rem; background-color: #e9f5ff; border: 1px solid #b3d7ff; border-radius: 5px; font-weight: bold; color: #004085; text-align: center; min-height: 25px; transition: background-color 0.3s; }
+        .resultado-final { background-color: #d4edda !important; border-color: #c3e6cb !important; color: #155724 !important; }
+        fieldset { border: 1px solid #ddd; border-radius: 5px; padding: 1rem; }
+        legend { font-weight: bold; color: #555; padding: 0 0.5rem; }
+        .radio-container { display: flex; justify-content: space-around; align-items: center; }
+        .radio-option { display: flex; align-items: center; }
+        .radio-option input[type="radio"] { width: auto; margin-right: 0.5rem; }
+        .radio-option label { font-weight: normal; margin-bottom: 0; }
+        .footer { background-color: #333; color: white; text-align: center; padding: 1.5rem 0; margin-top: 2rem; }
+        
+        .card ol { padding-left: 20px; }
+        .card ol li { margin-bottom: 1rem; }
+
+        @media (max-width: 600px) {
+            .header h1 { font-size: 1.8rem; }
+            .header .sub-heading { font-size: 1rem; }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <h1>Mosca Branca em Soja</h1>
+            <p class="sub-heading">Cálculo de Nível de Dano Econômico</p>
+        </div>
+    </header>
+
+    <main class="main-content container">
+
+          <section class="card" id="calculadora">
+            <h2>Calculadora de NDE</h2>
+            <form id="nde-form">
+                <div class="form-group">
+                    <label for="tecnologia">Tecnologia de Aplicação:</label>
+                    <select id="tecnologia" name="tecnologia" required>
+                        <option value="" disabled selected>Selecione uma opção</option>
+                        <option value="trator">Trator</option>
+                        <option value="aviao">Avião</option>
+                        <option value="drone">Drone</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <fieldset>
+                        <legend>Estágio da Cultura</legend>
+                        <div class="radio-container">
+                            <div class="radio-option">
+                                <input type="radio" id="estagio_v" name="estagio" value="vegetativo" checked required>
+                                <label for="estagio_v">Vegetativo</label>
+                            </div>
+                            <div class="radio-option">
+                                <input type="radio" id="estagio_r" name="estagio" value="reprodutivo">
+                                <label for="estagio_r">Reprodutivo</label>
+                            </div>
+                        </div>
+                    </fieldset>
+                </div>
+                <div class="form-group">
+                    <label for="producao">Produção esperada (sc/ha):</label>
+                    <input type="number" id="producao" name="producao" placeholder="Ex: 70" required>
+                </div>
+                <div class="form-group">
+                    <label for="preco_saca">Preço da saca de soja (R$):</label>
+                    <input type="number" id="preco_saca" name="preco_saca" step="0.01" placeholder="Ex: 135.50" required>
+                </div>
+                <button type="submit" class="button">Calcular NDE</button>
+            </form>
+            <div id="resultado"></div>
+        </section>
+        
+        <section class="card" id="sobre">
+            <h2>O que é o NDE?</h2>
+            <p>O Nível de Dano Econômico (NDE) é a densidade populacional da praga na qual o custo do dano causado é igual ao custo do controle. É a base para a tomada de decisão no Manejo Integrado de Pragas (MIP).</p>
+        </section>
+    </main>
+    <footer class="footer">
+        <div class="container">
+        </div>
+    </footer>
+
+    <script>
+        const ndeForm = document.getElementById('nde-form');
+        const selectTecnologia = document.getElementById('tecnologia');
+        const producaoInput = document.getElementById('producao');
+        const precoSacaInput = document.getElementById('preco_saca');
+        const resultadoDiv = document.getElementById('resultado');
+
+        let custo;
+
+        selectTecnologia.addEventListener('change', function() {
+            const valorSelecionado = this.value;
+            resultadoDiv.classList.remove('resultado-final'); 
+            
+            if (valorSelecionado === 'trator') custo = 380.30;
+            else if (valorSelecionado === 'aviao') custo = 402.08;
+            else if (valorSelecionado === 'drone') custo = 488.94;
+            else custo = undefined;
+
+            if (custo) resultadoDiv.innerHTML = `Custo de Controle selecionado: R$ ${custo.toFixed(2).replace('.', ',')}`;
+            else resultadoDiv.innerHTML = '';
+        });
+
+        ndeForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const producaoEsperada = parseFloat(producaoInput.value);
+            const precoSaca = parseFloat(precoSacaInput.value);
+            const estagioSelecionado = document.querySelector('input[name="estagio"]:checked').value;
+
+            if (custo && producaoEsperada > 0 && precoSaca > 0) {
+                const pp_percentual = (custo * 100) / ((producaoEsperada * precoSaca) * 0.8);
+                const pp_decimal = pp_percentual / 100;
+
+                let nde; 
+                
+                if (estagioSelecionado === 'vegetativo') {
+                    nde = (1 - pp_decimal) / 0.047;
+                } else {
+                    nde = (1 - pp_decimal) / 0.014;
+                }
+                
+                resultadoDiv.innerHTML = `<strong>Nível de Dano Econômico (NDE):<br>${nde.toFixed(2)} adultos/planta</strong>`;
+                resultadoDiv.classList.add('resultado-final');
+            
+            } else {
+                resultadoDiv.innerHTML = "Por favor, preencha todos os campos corretamente.";
+                resultadoDiv.classList.remove('resultado-final');
+            }
+        });
+    </script>
+</body>
+</html>
